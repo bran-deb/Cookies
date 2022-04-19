@@ -2,8 +2,9 @@ import { ChangeEvent, useEffect, useState } from "react";
 
 import { GetServerSideProps, NextPage } from 'next'
 
-import { Card, CardContent, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
+import { Card, CardContent, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Button } from "@mui/material";
 import Cookies from 'js-cookie'
+import axios from "axios";
 
 import { Layout } from "../components"
 
@@ -27,8 +28,14 @@ const ThemeChangerPage: NextPage = (props) => {
     useEffect(() => {
         console.log('LocalStorage', localStorage.getItem('theme'));
         // axios.post('/api/help',{localStorage.getItem('theme')})  //con localStorage se manda manual la info al backend
+        console.log('cookies', Cookies.get('theme'));
         //cookies lo manda por la request al backend
     }, []);
+
+    const onClick = async () => {
+        const { data } = await axios.get('/api/hello')
+        console.log({ data });
+    }
 
 
     return (
@@ -43,6 +50,9 @@ const ThemeChangerPage: NextPage = (props) => {
                             <FormControlLabel value='custom' control={<Radio />} label='custom' />
                         </RadioGroup>
                     </FormControl>
+                    <Button variant="text" onClick={onClick}>
+                        Solicitud
+                    </Button>
                 </CardContent>
             </Card>
         </Layout>
@@ -58,6 +68,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     const { theme = 'light', name = 'No name' } = req.cookies
 
     return {
+        //las manda al front
         props: {
             theme,
             name
