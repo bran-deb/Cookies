@@ -9,11 +9,15 @@ import axios from "axios";
 import { Layout } from "../components"
 
 
-const ThemeChangerPage: NextPage = (props) => {
-    console.log({ props });
+interface Props {
+    theme: string
+}
+
+const ThemeChangerPage: NextPage<Props> = ({ theme }) => {
+    // console.log({ props });
 
 
-    const [currentTheme, setCurrentTheme] = useState('light')
+    const [currentTheme, setCurrentTheme] = useState(theme)
 
     const onThemeChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
         const selectedTheme = target.value
@@ -66,11 +70,13 @@ const ThemeChangerPage: NextPage = (props) => {
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     //toma las cookies por la request
     const { theme = 'light', name = 'No name' } = req.cookies
+    //validar las cookies
+    const validThemes = ['light', 'dark', 'custom']
 
     return {
         //las manda al front
         props: {
-            theme,
+            theme: validThemes.includes(theme) ? theme : 'dark',
             name
         }
     }
