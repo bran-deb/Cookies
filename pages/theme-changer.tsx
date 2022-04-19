@@ -1,12 +1,16 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
+import { GetServerSideProps, NextPage } from 'next'
+
 import { Card, CardContent, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import Cookies from 'js-cookie'
 
 import { Layout } from "../components"
 
 
-const ThemeChangerPage = () => {
+const ThemeChangerPage: NextPage = (props) => {
+    console.log({ props });
+
 
     const [currentTheme, setCurrentTheme] = useState('light')
 
@@ -23,6 +27,7 @@ const ThemeChangerPage = () => {
     useEffect(() => {
         console.log('LocalStorage', localStorage.getItem('theme'));
         // axios.post('/api/help',{localStorage.getItem('theme')})  //con localStorage se manda manual la info al backend
+        //cookies lo manda por la request al backend
     }, []);
 
 
@@ -43,5 +48,22 @@ const ThemeChangerPage = () => {
         </Layout>
     )
 };
+
+
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+    //toma las cookies por la request
+    const { theme = 'light', name = 'No name' } = req.cookies
+
+    return {
+        props: {
+            theme,
+            name
+        }
+    }
+}
+
 
 export default ThemeChangerPage
